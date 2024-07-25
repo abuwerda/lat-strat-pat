@@ -3,7 +3,7 @@ library(ggpubr)
 library(plotly)
 library(viridis)
 
-data = read_csv("~/Library/CloudStorage/Dropbox/Documents/My Publications/Lat Strat Pat/R/raw_data_v4.csv")
+data = read_csv("analysis/data/raw_data/raw_data_v4.csv")
 
 df = data %>%
   select(c("Site", "Condensed_Cores", "Art_Class", "Art_Category", "Condition", "Patination", "Patina_Condensed", "Dissolution", "Abrasion", "Edge_Damage", "Distance","Length", "X_Coord", "Y_Coord", "Z_Coord"))
@@ -413,7 +413,7 @@ plot
 
 # Distance Boxplots: Debitage - Patina
 
-plot31 = ggplot(df %>% filter(Art_Class == "Debitage"), 
+plot31 = ggplot(df %>% filter(Art_Class == "Debitage"),
                aes(x = as.factor(Patination), y = Distance,
                    fill = as.factor(Patination))) +
   geom_boxplot(outlier.shape = NA) +
@@ -453,10 +453,10 @@ pairwise.wilcox.test(df_419$Distance, as.factor(df_419$Patination), p.adjust.met
 
 # Distance Boxplots: Tools - Patina
 
-plot32 = ggplot(df %>% filter(Patination!=99 & Art_Class == "Tool"), 
+plot32 = ggplot(df %>% filter(Patination!=99 & Art_Class == "Tool"),
                aes(x = as.factor(Patination), y = Distance,
                    fill = as.factor(Patination))) +
-  
+
   geom_boxplot(outlier.shape = NA) +
   geom_jitter(width = 0.1) +
   labs(title = "Tools",
@@ -490,7 +490,7 @@ pairwise.wilcox.test(df_419$Distance, as.factor(df_419$Patination), p.adjust.met
 
 # Distance Boxplots: Core - Patina
 
-plot33 = ggplot(df %>% filter(Art_Class == "Core" & Patination!=99), 
+plot33 = ggplot(df %>% filter(Art_Class == "Core" & Patination!=99),
                aes(x = as.factor(Patination), y = Distance,
                    fill = as.factor(Patination))) +
   geom_boxplot(outlier.shape = NA) +
@@ -527,7 +527,7 @@ pairwise.wilcox.test(df_419$Distance, as.factor(df_419$Patination), p.adjust.met
 
 # Distance Boxplots: Debitage - Dissolution
 
-plot34 = ggplot(df %>% filter(Art_Class == "Debitage"), 
+plot34 = ggplot(df %>% filter(Art_Class == "Debitage"),
                aes(x = as.factor(Dissolution), y = Distance,
                    fill = as.factor(Dissolution))) +
   geom_boxplot(outlier.shape = NA) +
@@ -568,7 +568,7 @@ pairwise.wilcox.test(df_419$Distance, as.factor(df_419$Dissolution), p.adjust.me
 
 # Distance Boxplots: Tools - Dissolution
 
-plot35 = ggplot(df %>% filter(Art_Class == "Tool"), 
+plot35 = ggplot(df %>% filter(Art_Class == "Tool"),
                aes(x = as.factor(Dissolution), y = Distance,
                    fill = as.factor(Dissolution))) +
   geom_boxplot(outlier.shape = NA) +
@@ -603,7 +603,7 @@ kruskal.test(Distance ~ as.factor(Dissolution), data = df_419)
 
 # Distance Boxplots: Cores - Dissolution
 
-plot36 = ggplot(df %>% filter(Patination !=99 & Art_Class == "Core"), 
+plot36 = ggplot(df %>% filter(Patination !=99 & Art_Class == "Core"),
                aes(x = as.factor(Dissolution), y = Distance,
                    fill = as.factor(Dissolution))) +
   geom_boxplot(outlier.shape = NA) +
@@ -641,7 +641,7 @@ pairwise.wilcox.test(df_419$Distance, as.factor(df_419$Dissolution), p.adjust.me
 
 # Distance Boxplots: Debitage - Edge Damage
 
-plot37 = ggplot(df %>% filter(Art_Class == "Debitage"), 
+plot37 = ggplot(df %>% filter(Art_Class == "Debitage"),
                aes(x = as.factor(Edge_Damage), y = Distance,
                    fill = as.factor(Edge_Damage))) +
   geom_boxplot(outlier.shape = NA) +
@@ -682,7 +682,7 @@ pairwise.wilcox.test(df_419$Distance, as.factor(df_419$Edge_Damage), p.adjust.me
 
 # Distance Boxplots: Tools - Edge Damage
 
-plot38 = ggplot(df %>% filter(Art_Class == "Tool"), 
+plot38 = ggplot(df %>% filter(Art_Class == "Tool"),
                aes(x = as.factor(Edge_Damage), y = Distance,
                    fill = as.factor(Edge_Damage))) +
   geom_boxplot(outlier.shape = NA) +
@@ -718,7 +718,7 @@ kruskal.test(Distance ~ as.factor(Edge_Damage), data = df_419)
 
 # Distance Boxpots: Cores - Edge Damage
 
-plot39 = ggplot(df %>% filter(Art_Class == "Core"), 
+plot39 = ggplot(df %>% filter(Art_Class == "Core"),
                aes(x = as.factor(Edge_Damage), y = Distance,
                    fill = as.factor(Edge_Damage))) +
   geom_boxplot(outlier.shape = NA) +
@@ -755,7 +755,7 @@ pairwise.wilcox.test(df_419$Distance, as.factor(df_419$Edge_Damage), p.adjust.me
 
 # Distance Boxplots: Debitage - Abrasion
 
-plot40 = ggplot(df %>% filter(Art_Class == "Debitage"), 
+plot40 = ggplot(df %>% filter(Art_Class == "Debitage"),
                aes(x = as.factor(Abrasion), y = Distance,
                    fill = as.factor(Abrasion))) +
   geom_boxplot(outlier.shape = NA) +
@@ -795,7 +795,7 @@ pairwise.wilcox.test(df_419$Distance, as.factor(df_419$Abrasion), p.adjust.metho
 
 # Distance Boxplots: Tools - Abrasion
 
-plot41 = ggplot(df %>% filter(Art_Class == "Tool"), 
+plot41 = ggplot(df %>% filter(Art_Class == "Tool"),
                aes(x = as.factor(Abrasion), y = Distance,
                    fill = as.factor(Abrasion))) +
   geom_boxplot(outlier.shape = NA) +
@@ -830,7 +830,7 @@ kruskal.test(Distance ~ as.factor(Abrasion), data = df_419)
 
 # Distance Boxplots: Cores - Abrasion
 
-plot42 = ggplot(df %>% filter(Art_Class == "Core"), 
+plot42 = ggplot(df %>% filter(Art_Class == "Core"),
                aes(x = as.factor(Abrasion), y = Distance,
                    fill = as.factor(Abrasion))) +
   geom_boxplot(outlier.shape = NA) +
@@ -931,7 +931,7 @@ df_Nubian = df %>% filter(Patination!=99 & Patination!=1 & Patination!=2 & Conde
 kruskal.test(Length ~ as.factor(Patination), data = df_Nubian)
 pairwise.wilcox.test(df_Nubian$Length, as.factor(df_Nubian$Patination), p.adjust.method = "BH")
 
-plot44 = ggplot(df %>% filter(Condensed_Cores == "Lev_Nubian" & Dissolution!=6), 
+plot44 = ggplot(df %>% filter(Condensed_Cores == "Lev_Nubian" & Dissolution!=6),
                 aes(x = as.factor(Dissolution), y = Length,
                     fill = as.factor(Dissolution))) +
   geom_boxplot(outlier.shape = NA) +
@@ -947,7 +947,7 @@ df_Nubian = df %>% filter(Condensed_Cores == "Lev_Nubian" & Dissolution!=6)
 kruskal.test(Length ~ as.factor(Dissolution), data = df_Nubian)
 pairwise.wilcox.test(df_Nubian$Length, as.factor(df_Nubian$Dissolution), p.adjust.method = "BH")
 
-plot45 = ggplot(df %>% filter(Condensed_Cores == "Lev_Nubian" & Edge_Damage!=5), 
+plot45 = ggplot(df %>% filter(Condensed_Cores == "Lev_Nubian" & Edge_Damage!=5),
                 aes(x = as.factor(Edge_Damage), y = Length,
                     fill = as.factor(Edge_Damage))) +
   geom_boxplot(outlier.shape = NA) +
@@ -962,7 +962,7 @@ plot45
 df_Nubian = df %>% filter(Condensed_Cores == "Lev_Nubian")
 kruskal.test(Length ~ as.factor(Edge_Damage), data = df_Nubian)
 
-plot46 = ggplot(df %>% filter(Condensed_Cores == "Lev_Nubian"), 
+plot46 = ggplot(df %>% filter(Condensed_Cores == "Lev_Nubian"),
                 aes(x = as.factor(Abrasion), y = Length,
                     fill = as.factor(Abrasion))) +
   geom_boxplot(outlier.shape = NA) +
@@ -1071,7 +1071,7 @@ kruskal.test(Length ~ as.factor(Patina_Condensed), data = df_419Nubian)
 pairwise.wilcox.test(df_419Nubian$Length, as.factor(df_419Nubian$Patina_Condensed), p.adjust.method = "BH")
 
 # 3D Plot [unused]
-plot = plot_ly(df_76, x = ~X_Coord, y = ~Y_Coord, z = ~Z_Coord, 
+plot = plot_ly(df_76, x = ~X_Coord, y = ~Y_Coord, z = ~Z_Coord,
                type = "scatter3d", mode = "markers") %>%
   layout(scene = list(
     aspectmode = "data"))
