@@ -15,7 +15,7 @@ Oman*.
 Please cite this compendium as:
 
 > Jeffrey Ian Rose, Yamandú H. Hilbert, Vitaly I. Usyk, Michelle R. Bebber, Amir Beshkani, Briggs Buchanan, João Cascalheira, Dominik Chlachula, Rudolf Dellmour, Metin I. Eren, Roman Garba, Emily Hallinan, Li Li, Robert S. Walker, Anthony E. Marks  (2024). *Compendium of R code and data for Mapping lateral stratigraphy at Palaeolithic surface sites: a case study from Dhofar,
-Oman*. Accessed 25 Jul 2024. Online at
+Oman*. Accessed 25 Jul 2024. Online at https://github.com/abuwerda/lat-strat-pat
 
 ## Contents
 
