@@ -1,7 +1,8 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# LatStratPat
+# Mapping lateral stratigraphy at Palaeolithic surface sites: a case study from Dhofar,
+Oman
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/abuwerda/lat-strat-pat/master?urlpath=rstudio)
 
