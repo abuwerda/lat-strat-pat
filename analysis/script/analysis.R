@@ -2,172 +2,150 @@ library(tidyverse)
 library(ggpubr)
 library(plotly)
 library(viridis)
+library(RColorBrewer)
+library(MASS)
+library(dplyr)
 
 data = read_csv("analysis/data/raw_data/raw_data_v4.csv")
 
-df = data %>%
-  select(c("Site", "Condensed_Cores", "Art_Class", "Art_Category", "Condition", "Patination", "Patina_Condensed", "Dissolution", "Abrasion", "Edge_Damage", "Distance","Length", "X_Coord", "Y_Coord", "Z_Coord"))
+df <- data %>%
+  dplyr::select(Site, Condensed_Cores, Art_Class, Art_Category,
+                Condition, Patination, Patina_Condensed,
+                Dissolution, Abrasion, Edge_Damage,
+                Distance, Length, X_Coord, Y_Coord, Z_Coord)
 
 # Color Palette
 virdis_colors = viridis(7, option = "D", direction = -1)
 color_mapping = setNames(virdis_colors, as.character(1:7))
 
-# 76 Scatterplots
+# 76 scatter plot with KDE profile
+
+total_station_x <- 295
+total_station_y <- 185
+total_station_z <- 530.5
+outcrop2_x <- 243
+outcrop2_y <- 172
+outcrop2_z <- 529.5
 
 plot1 = ggplot(df %>% filter(Site==76),
-                aes(x=X_Coord, y=Y_Coord, color=as.factor(Patination))) +
+               aes(x=X_Coord, y=Y_Coord, color=as.factor(Patination))) +
   geom_point()+
   labs(x = "x-coord (m)",
        y = "y-coord (m)",
        color="Patina Stage") +
   scale_color_viridis(discrete = TRUE, option = "D", direction=-1)+
-  theme_classic()
-plot1
+  theme_classic() +
+  geom_point(aes(x = total_station_x, y = total_station_y), color = "black", shape = 8, size = 4) +
+  geom_point(aes(x = outcrop2_x, y = outcrop2_y), color = "red", shape = 8, size = 4)
 
 plot2 = ggplot(df %>% filter(Site==76),
-                aes(x=X_Coord, y=Y_Coord, color=as.factor(Dissolution))) +
+               aes(x=X_Coord, y=Y_Coord, color=as.factor(Dissolution))) +
   geom_point()+
   labs(color="Dissolution") +
   scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
   theme_classic()+
-  theme(axis.title=element_blank())
-
-plot2
+  theme(axis.title=element_blank()) +
+  geom_point(aes(x = total_station_x, y = total_station_y), color = "black", shape = 8, size = 4) +
+  geom_point(aes(x = outcrop2_x, y = outcrop2_y), color = "red", shape = 8, size = 4)
 
 plot3 = ggplot(df %>% filter(Site==76),
-                aes(x=X_Coord, y=Y_Coord, color=as.factor(`Edge_Damage`))) +
-  geom_point()+
+               aes(x=X_Coord, y=Y_Coord, color=as.factor(`Edge_Damage`))) +
+  geom_point() +
   labs(x = "x-coord (m)",
        y = "y-coord (m)",
        color="Edge Damage") +
   scale_color_viridis(discrete = TRUE, option = "D", direction=-1)+
-  theme_classic()+
-  theme(axis.title=element_blank())
-plot3
+  theme_classic() +
+  theme(axis.title=element_blank()) +
+  geom_point(aes(x = total_station_x, y = total_station_y), color = "black", shape = 8, size = 4) +
+  geom_point(aes(x = outcrop2_x, y = outcrop2_y), color = "red", shape = 8, size = 4)
 
 plot4 = ggplot(df %>% filter(Site==76),
-                aes(x=X_Coord, y=Y_Coord, color=as.factor(`Abrasion`))) +
-  geom_point()+
-  labs(x = "x-coord (m)",
-       y = "y-coord (m)",
-  color="Abrasion") +
-  scale_color_viridis(discrete = TRUE, option = "D", direction=-1)+
-  theme_classic()+
-  theme(axis.title=element_blank())
-plot4
-
-plot5 = ggplot(df %>% filter(Site==76),
-                aes(x=Y_Coord, y=Z_Coord, color=as.factor(Dissolution))) +
-  geom_point()+
-  labs(x = "y-coord (m)",
-       y = "z-coord (m)") +
-  coord_fixed(ratio = 2) +
-  scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
-  scale_x_reverse()+
-  theme_classic()+
-  theme(legend.position="none")
-plot5
-
-plot = ggarrange(
-  ggarrange(plot1, plot2, ncol = 2, nrow = 1),
-  ggarrange(plot3, plot4, ncol = 2, nrow = 1),
-  plot5,
-  ncol = 1, nrow = 3,
-  heights = c(1, 1, .5))
-plot = annotate_figure(plot,
-                top = text_grob("TH76", size = 14))
-plot
-
-# 123 Scatterplots
-
-plot6 = ggplot(df %>% filter(Site==123),
-                aes(x=X_Coord, y=Y_Coord, color=as.factor(Patination))) +
-  geom_point()+
-  labs(x = "x-coord (m)",
-       y = "y-coord (m)",
-       color = "Patina Stage") +
-  scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
-  theme_classic()
-plot6
-
-plot7 = ggplot(df %>% filter(Site==123),
-                aes(x=X_Coord, y=Y_Coord, color=as.factor(`Dissolution`))) +
-  geom_point()+
-  labs(x = "x-coord (m)",
-       y = "y-coord (m)",
-       color= "Dissolution") +
-  scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
-  theme_classic()+
-  theme(axis.title=element_blank())
-plot7
-
-plot8 = ggplot(df %>% filter(Site==123),
-                aes(x=X_Coord, y=Y_Coord, color=as.factor(`Edge_Damage`))) +
-  geom_point()+
-  labs(x = "x-coord (m)",
-       y = "y-coord (m)",
-       color="Edge Damage") +
-  scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
-  theme_classic()+
-  theme(axis.title=element_blank())
-plot8
-
-plot9 = ggplot(df %>% filter(Site==123),
                aes(x=X_Coord, y=Y_Coord, color=as.factor(`Abrasion`))) +
   geom_point()+
   labs(x = "x-coord (m)",
        y = "y-coord (m)",
        color="Abrasion") +
-  scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
-  theme_classic()+
-  theme(axis.title=element_blank())
-plot9
+  scale_color_viridis(discrete = TRUE, option = "D", direction=-1)+
+  theme_classic() +
+  theme(axis.title=element_blank()) +
+  geom_point(aes(x = total_station_x, y = total_station_y), color = "black", shape = 8, size = 4) +
+  geom_point(aes(x = outcrop2_x, y = outcrop2_y), color = "red", shape = 8, size = 4)
 
-plot10 = ggplot(df %>% filter(Site==123),
-               aes(x=Y_Coord, y=Z_Coord, color=as.factor(Dissolution))) +
+plot5 = ggplot(df %>% filter(Site==76),
+               aes(x=Y_Coord, y=Z_Coord, color=as.factor(Patination))) +
   geom_point()+
   labs(x = "y-coord (m)",
        y = "z-coord (m)") +
-  coord_fixed(ratio = 2) +
   scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
   theme_classic()+
-  theme(legend.position="none")
-plot10
+  theme(legend.position="none") +
+  geom_point(x = total_station_y, y = total_station_z, color = "black", shape = 8, size = 4) +
+  geom_point(x = outcrop2_y, y = outcrop2_z, color = "red", shape = 8, size = 4) +
+  expand_limits(y = 530.75) +
+  coord_fixed(ratio = 1)
+
+df_filtered <- df %>%
+  filter(Site == 76, !is.na(Y_Coord), !is.na(Z_Coord))
+kde <- kde2d(df_filtered$Y_Coord, df_filtered$Z_Coord, n = 100)
+kde_df <- expand.grid(x = kde$x, y = kde$y)
+kde_df$z <- as.vector(kde$z)
+scale_factor <- 2
+kde_df$y <- kde_df$y * scale_factor
+kde_df$z[kde_df$z < 0.01] <- NA
+total_station_z_exaggerated <- total_station_z * 2
+outcrop2_z_exaggerated <- outcrop2_z * 2
+plot6 = ggplot(data = kde_df, aes(x = x, y = y, fill = z)) +
+  geom_tile() +
+  scale_fill_distiller(palette = "Spectral", na.value = "white") +
+  scale_y_continuous(labels = NULL) +
+  labs(x = "y-coord (m)", y = "z-coord", fill = "Density") +
+  theme_classic() +
+  coord_fixed() +
+  expand_limits(y = 530.75 * 2) +
+  geom_point(x = total_station_y, y = total_station_z_exaggerated, color = "black", shape = 8, size = 4) +
+  geom_point(x = outcrop2_y, y = outcrop2_z_exaggerated, color = "red", shape = 8, size = 4)
 
 plot = ggarrange(
-  ggarrange(plot6, plot7, ncol = 2, nrow = 1),
-  ggarrange(plot8, plot9, ncol = 2, nrow = 1),
-  plot10,
-  ncol = 1, nrow = 3,
-  heights = c(1, 1, .5))
+  ggarrange(plot1, plot2, ncol = 2, nrow = 1),
+  ggarrange(plot3, plot4, ncol = 2, nrow = 1),
+  plot5,
+  plot6,
+  ncol = 1, nrow = 4,
+  heights = c(1, 1, 1, .4)
+)
 plot = annotate_figure(plot,
-                       top = text_grob("TH123", size = 14))
+                       bottom = text_grob("TH.76", size = 15, face = "bold"))
 plot
 
-# 143 Scatterplots
+# 123 scatterplot with KDE profile
 
-plot11 = ggplot(df %>% filter(Site==143),
+total_station_x <- 292.5
+total_station_y <- 170
+total_station_z <- 529.5
+
+plot7 = ggplot(df %>% filter(Site==123),
                aes(x=X_Coord, y=Y_Coord, color=as.factor(Patination))) +
   geom_point()+
   labs(x = "x-coord (m)",
        y = "y-coord (m)",
        color = "Patina Stage") +
   scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
-  theme_classic()
-plot11
+  theme_classic() +
+  geom_point(aes(x = total_station_x, y = total_station_y), color = "black", shape = 8, size = 4) +
 
-plot12 = ggplot(df %>% filter(Site==143),
-               aes(x=X_Coord, y=Y_Coord, color=as.factor(`Dissolution`))) +
+  plot8 = ggplot(df %>% filter(Site==123),
+                 aes(x=X_Coord, y=Y_Coord, color=as.factor(`Dissolution`))) +
   geom_point()+
   labs(x = "x-coord (m)",
        y = "y-coord (m)",
        color= "Dissolution") +
   scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
   theme_classic()+
-  theme(axis.title=element_blank())
-plot12
+  theme(axis.title=element_blank()) +
+  geom_point(aes(x = total_station_x, y = total_station_y), color = "black", shape = 8, size = 4)
 
-plot13 = ggplot(df %>% filter(Site==143),
+plot9 = ggplot(df %>% filter(Site==123),
                aes(x=X_Coord, y=Y_Coord, color=as.factor(`Edge_Damage`))) +
   geom_point()+
   labs(x = "x-coord (m)",
@@ -175,66 +153,92 @@ plot13 = ggplot(df %>% filter(Site==143),
        color="Edge Damage") +
   scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
   theme_classic()+
-  theme(axis.title=element_blank())
-plot13
+  theme(axis.title=element_blank()) +
+  geom_point(aes(x = total_station_x, y = total_station_y), color = "black", shape = 8, size = 4)
+
+plot10 = ggplot(df %>% filter(Site==123),
+                aes(x=X_Coord, y=Y_Coord, color=as.factor(`Abrasion`))) +
+  geom_point()+
+  labs(x = "x-coord (m)",
+       y = "y-coord (m)",
+       color="Abrasion") +
+  scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
+  theme_classic()+
+  theme(axis.title=element_blank()) +
+  geom_point(aes(x = total_station_x, y = total_station_y), color = "black", shape = 8, size = 4)
+
+plot11 = ggplot(df %>% filter(Site==123),
+                aes(x=Y_Coord, y=Z_Coord, color=as.factor(Patination))) +
+  geom_point()+
+  labs(x = "y-coord (m)",
+       y = "z-coord (m)") +
+  scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
+  theme_classic()+
+  theme(legend.position="none") +
+  geom_point(aes(x = total_station_y, y = total_station_z), color = "black", shape = 8, size = 4) +
+  expand_limits(y = 529.75) +
+  coord_fixed(ratio = 1)
+
+df_filtered <- df %>%
+  filter(Site == 123, !is.na(Y_Coord), !is.na(Z_Coord))
+kde <- kde2d(df_filtered$Y_Coord, df_filtered$Z_Coord, n = 100)
+kde_df <- expand.grid(x = kde$x, y = kde$y)
+kde_df$z <- as.vector(kde$z)
+scale_factor <- 2
+kde_df$y <- kde_df$y * scale_factor
+kde_df$z[kde_df$z < 0.01] <- NA
+total_station_z_exaggerated <- total_station_z * 2
+plot12 = ggplot(data = kde_df, aes(x = x, y = y, fill = z)) +
+  geom_tile() +
+  scale_fill_distiller(palette = "Spectral", na.value = "white") +
+  scale_y_continuous(labels = NULL) +
+  labs(x = "y-coord (m)", y = "z-coord", fill = "Density") +
+  theme_classic() +
+  coord_fixed() +
+  expand_limits(y = 529.75 * 2) +
+  expand_limits(x = 169) +
+  geom_point(x = total_station_y, y = total_station_z_exaggerated, color = "black", shape = 8, size = 4)
+
+plot = ggarrange(
+  ggarrange(plot7, plot8, ncol = 2, nrow = 1),
+  ggarrange(plot9, plot10, ncol = 2, nrow = 1),
+  plot11,
+  plot12,
+  ncol = 1, nrow = 4,
+  heights = c(1, 1, 1, .4)
+)
+plot = annotate_figure(plot,
+                       bottom = text_grob("TH.123", size = 15, face = "bold"))
+plot
+
+# 143 scatterplot with KDE profile
+
+total_station_x <- 290
+total_station_y <- 163.5
+total_station_z <- 529
+
+plot13 = ggplot(df %>% filter(Site==143),
+                aes(x=X_Coord, y=Y_Coord, color=as.factor(Patination))) +
+  geom_point()+
+  labs(x = "x-coord (m)",
+       y = "y-coord (m)",
+       color = "Patina Stage") +
+  scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
+  theme_classic() +
+  geom_point(aes(x = total_station_x, y = total_station_y), color = "black", shape = 8, size = 4)
 
 plot14 = ggplot(df %>% filter(Site==143),
-               aes(x=X_Coord, y=Y_Coord, color=as.factor(`Abrasion`))) +
+                aes(x=X_Coord, y=Y_Coord, color=as.factor(`Dissolution`))) +
   geom_point()+
   labs(x = "x-coord (m)",
        y = "y-coord (m)",
-       color="Abrasion") +
+       color= "Dissolution") +
   scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
-  theme_classic()+
-  theme(axis.title=element_blank())
-plot14
+  theme_classic() +
+  theme(axis.title=element_blank()) +
+  geom_point(aes(x = total_station_x, y = total_station_y), color = "black", shape = 8, size = 4)
 
 plot15 = ggplot(df %>% filter(Site==143),
-               aes(x=X_Coord, y=Z_Coord, color=as.factor(Dissolution))) +
-  geom_point()+
-  labs(x = "x-coord (m)",
-       y = "z-coord (m)") +
-  coord_fixed(ratio = 2) +
-  scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
-  scale_x_reverse()+
-  theme_classic()+
-  theme(legend.position="none")
-plot15
-
-plot = ggarrange(
-  ggarrange(plot11, plot12, ncol = 2, nrow = 1),
-  ggarrange(plot13, plot14, ncol = 2, nrow = 1),
-  plot15,
-  ncol = 1, nrow = 3,
-  heights = c(1, 1, .5))
-plot = annotate_figure(plot,
-                       top = text_grob("TH143", size = 14))
-plot
-
-# 187 Scatterplots
-
-plot16 = ggplot(df %>% filter(Site==187),
-                aes(x=X_Coord, y=Y_Coord, color=as.factor(Patination))) +
-  geom_point()+
-  labs(x = "x-coord (m)",
-       y = "y-coord (m)",
-       color = "Patina Stage") +
-  scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
-  theme_classic()
-plot16
-
-plot17 = ggplot(df %>% filter(Site==187),
-                aes(x=X_Coord, y=Y_Coord, color=as.factor(`Dissolution`))) +
-  geom_point()+
-  labs(x = "x-coord (m)",
-       y = "y-coord (m)",
-       color= "Dissolution") +
-  scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
-  theme_classic()+
-  theme(axis.title=element_blank())
-plot17
-
-plot18 = ggplot(df %>% filter(Site==187),
                 aes(x=X_Coord, y=Y_Coord, color=as.factor(`Edge_Damage`))) +
   geom_point()+
   labs(x = "x-coord (m)",
@@ -242,54 +246,80 @@ plot18 = ggplot(df %>% filter(Site==187),
        color="Edge Damage") +
   scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
   theme_classic()+
-  theme(axis.title=element_blank())
-plot18
+  theme(axis.title=element_blank()) +
+  geom_point(aes(x = total_station_x, y = total_station_y), color = "black", shape = 8, size = 4)
+
+plot16 = ggplot(df %>% filter(Site==143),
+                aes(x=X_Coord, y=Y_Coord, color=as.factor(`Abrasion`))) +
+  geom_point()+
+  labs(x = "x-coord (m)",
+       y = "y-coord (m)",
+       color="Abrasion") +
+  scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
+  theme_classic()+
+  theme(axis.title=element_blank()) +
+  geom_point(aes(x = total_station_x, y = total_station_y), color = "black", shape = 8, size = 4)
+
+plot17 = ggplot(df %>% filter(Site==143),
+                aes(x=X_Coord, y=Z_Coord, color=as.factor(Patination))) +
+  geom_point()+
+  labs(x = "x-coord (m)",
+       y = "z-coord (m)") +
+  scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
+  theme_classic()+
+  theme(legend.position="none") +
+  geom_point(aes(x = total_station_x, y = total_station_z), color = "black", shape = 8, size = 4) +
+  expand_limits(y = 529.25) +
+  coord_fixed(ratio = 1)
+
+df_filtered <- df %>%
+  filter(Site == 143, !is.na(X_Coord), !is.na(Z_Coord))
+kde <- kde2d(df_filtered$X_Coord, df_filtered$Z_Coord, n = 100)
+kde_df <- expand.grid(x = kde$x, y = kde$y)
+kde_df$z <- as.vector(kde$z)
+scale_factor <- 2
+kde_df$y <- kde_df$y * scale_factor
+kde_df$z[kde_df$z < 0.01] <- NA
+total_station_z_exaggerated <- total_station_z * 2
+plot18 = ggplot(data = kde_df, aes(x = x, y = y, fill = z)) +
+  geom_tile() +
+  scale_fill_distiller(palette = "Spectral", na.value = "white") +
+  scale_y_continuous(labels = NULL) +
+  labs(x = "x-coord (m)", y = "z-coord", fill = "Density") +
+  theme_classic() +
+  coord_fixed() +
+  expand_limits(y = 529.25 * 2) +
+  geom_point(aes(x = total_station_x, y = total_station_z_exaggerated), color = "black", shape = 8, size = 4)
+
+plot = ggarrange(
+  ggarrange(plot13, plot14, ncol = 2, nrow = 1),
+  ggarrange(plot15, plot16, ncol = 2, nrow = 1),
+  plot17,
+  plot18,
+  ncol = 1, nrow = 4,
+  heights = c(1, 1, 1, .4)
+)
+plot = annotate_figure(plot,
+                       bottom = text_grob("TH.143", size = 15, face = "bold"))
+plot
+
+# 187 scatterplot with KDE profile
+
+total_station_x <- 293
+total_station_y <- 165
+total_station_z <- 529.5
 
 plot19 = ggplot(df %>% filter(Site==187),
-                aes(x=X_Coord, y=Y_Coord, color=as.factor(`Abrasion`))) +
+                aes(x=X_Coord, y=Y_Coord, color=as.factor(Patination))) +
   geom_point()+
   labs(x = "x-coord (m)",
        y = "y-coord (m)",
-       color="Abrasion") +
+       color = "Patina Stage") +
   scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
-  theme_classic()+
-  theme(axis.title=element_blank())
-plot19
+  theme_classic() +
+  geom_point(aes(x = total_station_x, y = total_station_y), color = "black", shape = 8, size = 4)
 
 plot20 = ggplot(df %>% filter(Site==187),
-               aes(x=Y_Coord, y=Z_Coord, color=as.factor(Dissolution))) +
-  geom_point()+
-  labs(x = "y-coord (m)",
-       y = "z-coord (m)") +
-  coord_fixed(ratio = 2) +
-  scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
-  theme_classic()+
-  theme(legend.position="none")
-plot20
-
-plot = ggarrange(
-  ggarrange(plot16, plot17, ncol = 2, nrow = 1),
-  ggarrange(plot18, plot19, ncol = 2, nrow = 1),
-  plot20,
-  ncol = 1, nrow = 3,
-  heights = c(1, 1, .5))
-plot = annotate_figure(plot,
-                       top = text_grob("TH187", size = 14))
-plot
-
-# 188 Scatterplots
-
-plot21 = ggplot(df %>% filter(Site==188),
-                aes(x=X_Coord, y=Y_Coord, color=as.factor(Patination))) +
-  geom_point()+
-  labs(x = "x-coord (m)",
-       y = "y-coord (m)",
-       color = "Patina Stage") +
-  scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
-  theme_classic()
-plot21
-
-plot22 = ggplot(df %>% filter(Site==188),
                 aes(x=X_Coord, y=Y_Coord, color=as.factor(`Dissolution`))) +
   geom_point()+
   labs(x = "x-coord (m)",
@@ -297,10 +327,10 @@ plot22 = ggplot(df %>% filter(Site==188),
        color= "Dissolution") +
   scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
   theme_classic()+
-  theme(axis.title=element_blank())
-plot22
+  theme(axis.title=element_blank()) +
+  geom_point(aes(x = total_station_x, y = total_station_y), color = "black", shape = 8, size = 4)
 
-plot23 = ggplot(df %>% filter(Site==188),
+plot21 = ggplot(df %>% filter(Site==187),
                 aes(x=X_Coord, y=Y_Coord, color=as.factor(`Edge_Damage`))) +
   geom_point()+
   labs(x = "x-coord (m)",
@@ -308,10 +338,10 @@ plot23 = ggplot(df %>% filter(Site==188),
        color="Edge Damage") +
   scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
   theme_classic()+
-  theme(axis.title=element_blank())
-plot23
+  theme(axis.title=element_blank()) +
+  geom_point(aes(x = total_station_x, y = total_station_y), color = "black", shape = 8, size = 4)
 
-plot24 = ggplot(df %>% filter(Site==188),
+plot22 = ggplot(df %>% filter(Site==187),
                 aes(x=X_Coord, y=Y_Coord, color=as.factor(`Abrasion`))) +
   geom_point()+
   labs(x = "x-coord (m)",
@@ -319,44 +349,69 @@ plot24 = ggplot(df %>% filter(Site==188),
        color="Abrasion") +
   scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
   theme_classic()+
-  theme(axis.title=element_blank())
-plot24
+  theme(axis.title=element_blank()) +
+  geom_point(aes(x = total_station_x, y = total_station_y), color = "black", shape = 8, size = 4)
+
+plot23 = ggplot(df %>% filter(Site==187),
+                aes(x=Y_Coord, y=Z_Coord, color=as.factor(Patination))) +
+  geom_point()+
+  labs(x = "y-coord (m)",
+       y = "z-coord (m)") +
+  scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
+  theme_classic()+
+  theme(legend.position="none") +
+  geom_point(aes(x = total_station_y, y = total_station_z), color = "black", shape = 8, size = 4) +
+  expand_limits(y = 529.75) +
+  coord_fixed(ratio = 1)
+
+df_filtered <- df %>%
+  filter(Site == 187, !is.na(Y_Coord), !is.na(Z_Coord))
+kde <- kde2d(df_filtered$Y_Coord, df_filtered$Z_Coord, n = 100)
+kde_df <- expand.grid(x = kde$x, y = kde$y)
+kde_df$z <- as.vector(kde$z)
+scale_factor <- 2
+kde_df$y <- kde_df$y * scale_factor
+kde_df$z[kde_df$z < 0.01] <- NA
+total_station_z_exaggerated <- total_station_z * 2
+plot24 = ggplot(data = kde_df, aes(x = x, y = y, fill = z)) +
+  geom_tile() +
+  scale_fill_distiller(palette = "Spectral", na.value = "white") +
+  scale_y_continuous(labels = NULL) +
+  labs(x = "y-coord (m)", y = "z-coord", fill = "Density") +
+  theme_classic() +
+  coord_fixed() +
+  expand_limits(y = 529.75 * 2) +
+  geom_point(aes(x = total_station_y, y = total_station_z_exaggerated), color = "black", shape = 8, size = 4)
+
+plot = ggarrange(
+  ggarrange(plot19, plot20, ncol = 2, nrow = 1),
+  ggarrange(plot21, plot22, ncol = 2, nrow = 1),
+  plot23,
+  plot24,
+  ncol = 1, nrow = 4,
+  heights = c(1, 1, 1, .4)
+)
+plot = annotate_figure(plot,
+                       bottom = text_grob("TH.187", size = 15, face = "bold"))
+plot
+
+# 188 scatterplot with KDE profile
+
+total_station_x <- 287
+total_station_y <- 190
+total_station_z <- 532.5
 
 plot25 = ggplot(df %>% filter(Site==188),
-               aes(x=Y_Coord, y=Z_Coord, color=as.factor(Dissolution))) +
-  geom_point()+
-  labs(x = "y-coord (m)",
-       y = "z-coord (m)") +
-  coord_fixed(ratio = 2) +
-  scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
-  scale_x_reverse()+
-  theme_classic()+
-  theme(legend.position="none")
-plot25
-
-plot = ggarrange(
-  ggarrange(plot21, plot22, ncol = 2, nrow = 1),
-  ggarrange(plot23, plot24, ncol = 2, nrow = 1),
-  plot25,
-  ncol = 1, nrow = 3,
-  heights = c(1, 1, .5))
-plot = annotate_figure(plot,
-                       top = text_grob("TH188", size = 14))
-plot
-
-# 419 Scatterplots
-
-plot26 = ggplot(df %>% filter(Site==419 & Patination!=99),
                 aes(x=X_Coord, y=Y_Coord, color=as.factor(Patination))) +
   geom_point()+
   labs(x = "x-coord (m)",
        y = "y-coord (m)",
        color = "Patina Stage") +
   scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
-  theme_classic()
-plot26
+  theme_classic() +
+  geom_point(aes(x = total_station_x, y = total_station_y), color = "black", shape = 8, size = 4)
 
-plot27 = ggplot(df %>% filter(Site==419),
+plot26 = ggplot(df %>% filter(Site==188),
                 aes(x=X_Coord, y=Y_Coord, color=as.factor(`Dissolution`))) +
   geom_point()+
   labs(x = "x-coord (m)",
@@ -364,10 +419,10 @@ plot27 = ggplot(df %>% filter(Site==419),
        color= "Dissolution") +
   scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
   theme_classic()+
-  theme(axis.title=element_blank())
-plot27
+  theme(axis.title=element_blank()) +
+  geom_point(aes(x = total_station_x, y = total_station_y), color = "black", shape = 8, size = 4)
 
-plot28 = ggplot(df %>% filter(Site==419),
+plot27 = ggplot(df %>% filter(Site==188),
                 aes(x=X_Coord, y=Y_Coord, color=as.factor(`Edge_Damage`))) +
   geom_point()+
   labs(x = "x-coord (m)",
@@ -375,10 +430,10 @@ plot28 = ggplot(df %>% filter(Site==419),
        color="Edge Damage") +
   scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
   theme_classic()+
-  theme(axis.title=element_blank())
-plot28
+  theme(axis.title=element_blank()) +
+  geom_point(aes(x = total_station_x, y = total_station_y), color = "black", shape = 8, size = 4)
 
-plot29 = ggplot(df %>% filter(Site==419),
+plot28 = ggplot(df %>% filter(Site==188),
                 aes(x=X_Coord, y=Y_Coord, color=as.factor(`Abrasion`))) +
   geom_point()+
   labs(x = "x-coord (m)",
@@ -386,36 +441,151 @@ plot29 = ggplot(df %>% filter(Site==419),
        color="Abrasion") +
   scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
   theme_classic()+
-  theme(axis.title=element_blank())
-plot29
+  theme(axis.title=element_blank()) +
+  geom_point(aes(x = total_station_x, y = total_station_y), color = "black", shape = 8, size = 4)
 
-plot30 = ggplot(df %>% filter(Site==419),
-                aes(x=X_Coord, y=Z_Coord, color=as.factor(Dissolution))) +
+plot29 = ggplot(df %>% filter(Site==188),
+                aes(x=Y_Coord, y=Z_Coord, color=as.factor(Patination))) +
   geom_point()+
-  labs(x = "x-coord (m)",
+  labs(x = "y-coord (m)",
        y = "z-coord (m)") +
-  coord_fixed(ratio = 2) +
   scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
   scale_x_reverse()+
   theme_classic()+
-  theme(legend.position="none")
-plot30
+  theme(legend.position="none") +
+  geom_point(aes(x = total_station_y, y = total_station_z), color = "black", shape = 8, size = 4) +
+  expand_limits(y = 532.75) +
+  coord_fixed(ratio = 1)
+
+df_filtered <- df %>%
+  filter(Site == 188, !is.na(Y_Coord), !is.na(Z_Coord))
+kde <- kde2d(df_filtered$Y_Coord, df_filtered$Z_Coord, n = 100)
+kde_df <- expand.grid(x = kde$x, y = kde$y)
+kde_df$z <- as.vector(kde$z)
+scale_factor <- 2
+kde_df$y <- kde_df$y * scale_factor
+kde_df$z[kde_df$z < 0.01] <- NA
+total_station_z_exaggerated <- total_station_z * 2
+plot30 = ggplot(data = kde_df, aes(x = x, y = y, fill = z)) +
+  geom_tile() +
+  scale_fill_distiller(palette = "Spectral", na.value = "white") +
+  scale_y_continuous(labels = NULL) +
+  scale_x_reverse() +
+  labs(x = "y-coord (m)", y = "z-coord", fill = "Density") +
+  theme_classic() +
+  coord_fixed() +
+  expand_limits(y = 532.75 * 2) +
+  geom_point(aes(x = total_station_y, y = total_station_z_exaggerated), color = "black", shape = 8, size = 4)
 
 plot = ggarrange(
-  ggarrange(plot26, plot27, ncol = 2, nrow = 1),
-  ggarrange(plot28, plot29, ncol = 2, nrow = 1),
+  ggarrange(plot25, plot26, ncol = 2, nrow = 1),
+  ggarrange(plot27, plot28, ncol = 2, nrow = 1),
+  plot29,
   plot30,
-  ncol = 1, nrow = 3,
-  heights = c(1, 1, .5))
+  ncol = 1, nrow = 4,
+  heights = c(1, 1, 1, .6)
+)
 plot = annotate_figure(plot,
-                       top = text_grob("TH419", size = 14))
+                       bottom = text_grob("TH.188", size = 15, face = "bold"))
+plot
+
+# 419 scatterplot with KDE profile
+
+total_station_x <- 287
+total_station_y <- 161
+total_station_z <- 529
+
+plot31 = ggplot(df %>% filter(Site==419 & Patination!=99),
+                aes(x=X_Coord, y=Y_Coord, color=as.factor(Patination))) +
+  geom_point()+
+  labs(x = "x-coord (m)",
+       y = "y-coord (m)",
+       color = "Patina Stage") +
+  scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
+  theme_classic() +
+  geom_point(aes(x = total_station_x, y = total_station_y), color = "black", shape = 8, size = 4)
+
+plot32 = ggplot(df %>% filter(Site==419),
+                aes(x=X_Coord, y=Y_Coord, color=as.factor(`Dissolution`))) +
+  geom_point()+
+  labs(x = "x-coord (m)",
+       y = "y-coord (m)",
+       color= "Dissolution") +
+  scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
+  theme_classic()+
+  theme(axis.title=element_blank()) +
+  geom_point(aes(x = total_station_x, y = total_station_y), color = "black", shape = 8, size = 4)
+
+plot33 = ggplot(df %>% filter(Site==419),
+                aes(x=X_Coord, y=Y_Coord, color=as.factor(`Edge_Damage`))) +
+  geom_point()+
+  labs(x = "x-coord (m)",
+       y = "y-coord (m)",
+       color="Edge Damage") +
+  scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
+  theme_classic()+
+  theme(axis.title=element_blank()) +
+  geom_point(aes(x = total_station_x, y = total_station_y), color = "black", shape = 8, size = 4)
+
+plot34 = ggplot(df %>% filter(Site==419),
+                aes(x=X_Coord, y=Y_Coord, color=as.factor(`Abrasion`))) +
+  geom_point()+
+  labs(x = "x-coord (m)",
+       y = "y-coord (m)",
+       color="Abrasion") +
+  scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
+  theme_classic()+
+  theme(axis.title=element_blank()) +
+  geom_point(aes(x = total_station_x, y = total_station_y), color = "black", shape = 8, size = 4)
+
+plot35 = ggplot(df %>% filter(Site==419),
+                aes(x=X_Coord, y=Z_Coord, color=as.factor(Patination))) +
+  geom_point()+
+  labs(x = "x-coord (m)",
+       y = "z-coord (m)") +
+  scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
+  theme_classic()+
+  theme(legend.position="none") +
+  geom_point(aes(x = total_station_x, y = total_station_z), color = "black", shape = 8, size = 4) +
+  expand_limits(y = 529.25) +
+  coord_fixed(ratio = 1)
+
+df_filtered <- df %>%
+  filter(Site == 419, !is.na(X_Coord), !is.na(Z_Coord))
+kde <- kde2d(df_filtered$X_Coord, df_filtered$Z_Coord, n = 100)
+kde_df <- expand.grid(x = kde$x, y = kde$y)
+kde_df$z <- as.vector(kde$z)
+scale_factor <- 2
+kde_df$y <- kde_df$y * scale_factor
+kde_df$z[kde_df$z < 0.01] <- NA
+total_station_z_exaggerated <- total_station_z * 2
+plot36 = ggplot(data = kde_df, aes(x = x, y = y, fill = z)) +
+  geom_tile() +
+  scale_fill_distiller(palette = "Spectral", na.value = "white") +
+  scale_y_continuous(labels = NULL) +
+  labs(x = "x-coord (m)", y = "z-coord", fill = "Density") +
+  theme_classic() +
+  coord_fixed() +
+  expand_limits(y = 529.25 * 2) +
+  geom_point(aes(x = total_station_x, y = total_station_z_exaggerated), color = "black", shape = 8, size = 4)
+
+plot = ggarrange(
+  ggarrange(plot31, plot32, ncol = 2, nrow = 1),
+  ggarrange(plot33, plot34, ncol = 2, nrow = 1),
+  plot35,
+  plot36,
+  ncol = 1, nrow = 4,
+  heights = c(1, 1, .4)
+)
+plot = annotate_figure(plot,
+                       bottom = text_grob("TH.419", size = 15, face = "bold"))
 plot
 
 # Distance Boxplots: Debitage - Patina
 
-plot31 = ggplot(df %>% filter(Art_Class == "Debitage"),
-               aes(x = as.factor(Patination), y = Distance,
-                   fill = as.factor(Patination))) +
+plot37 = ggplot(df %>% filter(Art_Class == "Debitage"),
+                aes(x = as.factor(Patination), y = Distance,
+                    fill = as.factor(Patination))) +
   geom_boxplot(outlier.shape = NA) +
   geom_jitter(width = 0.1, size = 1) +
   labs(x = "",
@@ -426,7 +596,7 @@ plot31 = ggplot(df %>% filter(Art_Class == "Debitage"),
   theme_classic() +
   theme(plot.title=element_text(hjust=.5))+
   facet_wrap(~as.factor(Site))
-plot31
+plot37
 
 df_76 = df %>% filter(Site == 76 & Art_Class == "Debitage")
 kruskal.test(Distance ~ as.factor(Patination), data = df_76)
@@ -453,9 +623,9 @@ pairwise.wilcox.test(df_419$Distance, as.factor(df_419$Patination), p.adjust.met
 
 # Distance Boxplots: Tools - Patina
 
-plot32 = ggplot(df %>% filter(Patination!=99 & Art_Class == "Tool"),
-               aes(x = as.factor(Patination), y = Distance,
-                   fill = as.factor(Patination))) +
+plot38 = ggplot(df %>% filter(Patination!=99 & Art_Class == "Tool"),
+                aes(x = as.factor(Patination), y = Distance,
+                    fill = as.factor(Patination))) +
 
   geom_boxplot(outlier.shape = NA) +
   geom_jitter(width = 0.1) +
@@ -467,7 +637,7 @@ plot32 = ggplot(df %>% filter(Patination!=99 & Art_Class == "Tool"),
   theme_classic() +
   theme(plot.title=element_text(hjust=.5))+
   facet_wrap(~as.factor(Site))
-plot32
+plot38
 
 df_76 = df %>% filter(Site == 76 & Art_Class == "Tool" & Patination!=99)
 kruskal.test(Distance ~ as.factor(Patination), data = df_76)
@@ -490,9 +660,9 @@ pairwise.wilcox.test(df_419$Distance, as.factor(df_419$Patination), p.adjust.met
 
 # Distance Boxplots: Core - Patina
 
-plot33 = ggplot(df %>% filter(Art_Class == "Core" & Patination!=99),
-               aes(x = as.factor(Patination), y = Distance,
-                   fill = as.factor(Patination))) +
+plot39 = ggplot(df %>% filter(Art_Class == "Core" & Patination!=99),
+                aes(x = as.factor(Patination), y = Distance,
+                    fill = as.factor(Patination))) +
   geom_boxplot(outlier.shape = NA) +
   geom_jitter(width = 0.1) +
   labs(fill = "Patina Stage",
@@ -503,7 +673,7 @@ plot33 = ggplot(df %>% filter(Art_Class == "Core" & Patination!=99),
   theme_classic() +
   theme(plot.title=element_text(hjust=.5))+
   facet_wrap(~as.factor(Site))
-plot33
+plot39
 
 df_76 = df %>% filter(Site == 76 & Art_Class == "Core")
 kruskal.test(Distance ~ as.factor(Patination), data = df_76)
@@ -527,9 +697,9 @@ pairwise.wilcox.test(df_419$Distance, as.factor(df_419$Patination), p.adjust.met
 
 # Distance Boxplots: Debitage - Dissolution
 
-plot34 = ggplot(df %>% filter(Art_Class == "Debitage"),
-               aes(x = as.factor(Dissolution), y = Distance,
-                   fill = as.factor(Dissolution))) +
+plot40 = ggplot(df %>% filter(Art_Class == "Debitage"),
+                aes(x = as.factor(Dissolution), y = Distance,
+                    fill = as.factor(Dissolution))) +
   geom_boxplot(outlier.shape = NA) +
   geom_jitter(width = 0.1, size = 1) +
   labs(fill = "Dissolution",
@@ -540,7 +710,7 @@ plot34 = ggplot(df %>% filter(Art_Class == "Debitage"),
   theme_classic() +
   theme(plot.title=element_text(hjust=.5))+
   facet_wrap(~as.factor(Site))
-plot34
+plot40
 
 df_76 = df %>% filter(Site == 76 & Art_Class == "Debitage")
 kruskal.test(Distance ~ as.factor(Dissolution), data = df_76)
@@ -568,9 +738,9 @@ pairwise.wilcox.test(df_419$Distance, as.factor(df_419$Dissolution), p.adjust.me
 
 # Distance Boxplots: Tools - Dissolution
 
-plot35 = ggplot(df %>% filter(Art_Class == "Tool"),
-               aes(x = as.factor(Dissolution), y = Distance,
-                   fill = as.factor(Dissolution))) +
+plot41 = ggplot(df %>% filter(Art_Class == "Tool"),
+                aes(x = as.factor(Dissolution), y = Distance,
+                    fill = as.factor(Dissolution))) +
   geom_boxplot(outlier.shape = NA) +
   geom_jitter(width = 0.1) +
   labs(fill = "Dissolution",
@@ -581,7 +751,7 @@ plot35 = ggplot(df %>% filter(Art_Class == "Tool"),
   theme_classic() +
   theme(plot.title=element_text(hjust=.5))+
   facet_wrap(~as.factor(Site))
-plot35
+plot41
 
 df_76 = df %>% filter(Site == 76 & Art_Class == "Tool")
 kruskal.test(Distance ~ as.factor(Dissolution), data = df_76)
@@ -603,9 +773,9 @@ kruskal.test(Distance ~ as.factor(Dissolution), data = df_419)
 
 # Distance Boxplots: Cores - Dissolution
 
-plot36 = ggplot(df %>% filter(Patination !=99 & Art_Class == "Core"),
-               aes(x = as.factor(Dissolution), y = Distance,
-                   fill = as.factor(Dissolution))) +
+plot42 = ggplot(df %>% filter(Patination !=99 & Art_Class == "Core"),
+                aes(x = as.factor(Dissolution), y = Distance,
+                    fill = as.factor(Dissolution))) +
   geom_boxplot(outlier.shape = NA) +
   geom_jitter(width = 0.1) +
   labs(fill = "Dissolution",
@@ -616,7 +786,7 @@ plot36 = ggplot(df %>% filter(Patination !=99 & Art_Class == "Core"),
   theme_classic() +
   theme(plot.title=element_text(hjust=.5))+
   facet_wrap(~as.factor(Site))
-plot36
+plot42
 
 df_76 = df %>% filter(Site == 76 & Art_Class == "Core")
 kruskal.test(Distance ~ as.factor(Dissolution), data = df_76)
@@ -641,9 +811,9 @@ pairwise.wilcox.test(df_419$Distance, as.factor(df_419$Dissolution), p.adjust.me
 
 # Distance Boxplots: Debitage - Edge Damage
 
-plot37 = ggplot(df %>% filter(Art_Class == "Debitage"),
-               aes(x = as.factor(Edge_Damage), y = Distance,
-                   fill = as.factor(Edge_Damage))) +
+plot43 = ggplot(df %>% filter(Art_Class == "Debitage"),
+                aes(x = as.factor(Edge_Damage), y = Distance,
+                    fill = as.factor(Edge_Damage))) +
   geom_boxplot(outlier.shape = NA) +
   geom_jitter(width = 0.1, size = 1) +
   labs(fill = "Edge Damage",
@@ -654,7 +824,7 @@ plot37 = ggplot(df %>% filter(Art_Class == "Debitage"),
   theme_classic() +
   theme(plot.title=element_text(hjust=.5))+
   facet_wrap(~as.factor(Site))
-plot37
+plot43
 
 df_76 = df %>% filter(Site == 76 & Art_Class == "Debitage")
 kruskal.test(Distance ~ as.factor(Edge_Damage), data = df_76)
@@ -682,9 +852,9 @@ pairwise.wilcox.test(df_419$Distance, as.factor(df_419$Edge_Damage), p.adjust.me
 
 # Distance Boxplots: Tools - Edge Damage
 
-plot38 = ggplot(df %>% filter(Art_Class == "Tool"),
-               aes(x = as.factor(Edge_Damage), y = Distance,
-                   fill = as.factor(Edge_Damage))) +
+plot44 = ggplot(df %>% filter(Art_Class == "Tool"),
+                aes(x = as.factor(Edge_Damage), y = Distance,
+                    fill = as.factor(Edge_Damage))) +
   geom_boxplot(outlier.shape = NA) +
   geom_jitter(width = 0.1) +
   labs(fill = "Edge Damage",
@@ -695,7 +865,7 @@ plot38 = ggplot(df %>% filter(Art_Class == "Tool"),
   theme_classic() +
   theme(plot.title=element_text(hjust=.5))+
   facet_wrap(~as.factor(Site))
-plot38
+plot44
 
 df_76 = df %>% filter(Site == 76 & Art_Class == "Tool")
 kruskal.test(Distance ~ as.factor(Edge_Damage), data = df_76)
@@ -718,9 +888,9 @@ kruskal.test(Distance ~ as.factor(Edge_Damage), data = df_419)
 
 # Distance Boxpots: Cores - Edge Damage
 
-plot39 = ggplot(df %>% filter(Art_Class == "Core"),
-               aes(x = as.factor(Edge_Damage), y = Distance,
-                   fill = as.factor(Edge_Damage))) +
+plot45 = ggplot(df %>% filter(Art_Class == "Core"),
+                aes(x = as.factor(Edge_Damage), y = Distance,
+                    fill = as.factor(Edge_Damage))) +
   geom_boxplot(outlier.shape = NA) +
   geom_jitter(width = 0.1) +
   labs(fill = "Edge Damage",
@@ -731,7 +901,7 @@ plot39 = ggplot(df %>% filter(Art_Class == "Core"),
   theme_classic() +
   theme(plot.title=element_text(hjust=.5))+
   facet_wrap(~as.factor(Site))
-plot39
+plot45
 
 df_76 = df %>% filter(Site == 76 & Art_Class == "Core")
 kruskal.test(Distance ~ as.factor(Edge_Damage), data = df_76)
@@ -755,9 +925,9 @@ pairwise.wilcox.test(df_419$Distance, as.factor(df_419$Edge_Damage), p.adjust.me
 
 # Distance Boxplots: Debitage - Abrasion
 
-plot40 = ggplot(df %>% filter(Art_Class == "Debitage"),
-               aes(x = as.factor(Abrasion), y = Distance,
-                   fill = as.factor(Abrasion))) +
+plot46 = ggplot(df %>% filter(Art_Class == "Debitage"),
+                aes(x = as.factor(Abrasion), y = Distance,
+                    fill = as.factor(Abrasion))) +
   geom_boxplot(outlier.shape = NA) +
   geom_jitter(width = 0.1, size = 1) +
   labs(fill = "Abrasion",
@@ -768,7 +938,7 @@ plot40 = ggplot(df %>% filter(Art_Class == "Debitage"),
   theme_classic() +
   theme(plot.title=element_text(hjust=.5))+
   facet_wrap(~as.factor(Site))
-plot40
+plot46
 
 df_76 = df %>% filter(Site == 76 & Art_Class == "Debitage")
 kruskal.test(Distance ~ as.factor(Abrasion), data = df_76)
@@ -795,9 +965,9 @@ pairwise.wilcox.test(df_419$Distance, as.factor(df_419$Abrasion), p.adjust.metho
 
 # Distance Boxplots: Tools - Abrasion
 
-plot41 = ggplot(df %>% filter(Art_Class == "Tool"),
-               aes(x = as.factor(Abrasion), y = Distance,
-                   fill = as.factor(Abrasion))) +
+plot47 = ggplot(df %>% filter(Art_Class == "Tool"),
+                aes(x = as.factor(Abrasion), y = Distance,
+                    fill = as.factor(Abrasion))) +
   geom_boxplot(outlier.shape = NA) +
   geom_jitter(width = 0.1) +
   labs(fill = "Abrasion",
@@ -808,7 +978,7 @@ plot41 = ggplot(df %>% filter(Art_Class == "Tool"),
   theme_classic() +
   theme(plot.title=element_text(hjust=.5))+
   facet_wrap(~as.factor(Site))
-plot41
+plot47
 
 df_76 = df %>% filter(Site == 76 & Art_Class == "Tool")
 kruskal.test(Distance ~ as.factor(Abrasion), data = df_76)
@@ -830,9 +1000,9 @@ kruskal.test(Distance ~ as.factor(Abrasion), data = df_419)
 
 # Distance Boxplots: Cores - Abrasion
 
-plot42 = ggplot(df %>% filter(Art_Class == "Core"),
-               aes(x = as.factor(Abrasion), y = Distance,
-                   fill = as.factor(Abrasion))) +
+plot48 = ggplot(df %>% filter(Art_Class == "Core"),
+                aes(x = as.factor(Abrasion), y = Distance,
+                    fill = as.factor(Abrasion))) +
   geom_boxplot(outlier.shape = NA) +
   geom_jitter(width = 0.1) +
   labs(fill = "Abrasion",
@@ -843,7 +1013,7 @@ plot42 = ggplot(df %>% filter(Art_Class == "Core"),
   theme_classic() +
   theme(plot.title=element_text(hjust=.5))+
   facet_wrap(~as.factor(Site))
-plot42
+plot48
 
 df_76 = df %>% filter(Site == 76 & Art_Class == "Core")
 kruskal.test(Distance ~ as.factor(Abrasion), data = df_76)
@@ -916,7 +1086,7 @@ ggplot(data = df %>% filter(!is.na(Art_Category))) +
 
 # Nubian Core Metric Box Plots
 
-plot43 = ggplot(df %>% filter(Patination!=99 & Patination!=1 & Patination!=2 & Condensed_Cores == "Lev_Nubian"),
+plot49 = ggplot(df %>% filter(Patination!=99 & Patination!=1 & Patination!=2 & Condensed_Cores == "Lev_Nubian"),
                 aes(x = as.factor(Patination), y = Length,
                     fill = as.factor(Patination))) +
   geom_boxplot(outlier.shape = NA) +
@@ -925,13 +1095,13 @@ plot43 = ggplot(df %>% filter(Patination!=99 & Patination!=1 & Patination!=2 & C
        fill="Patina Stage") +
   scale_fill_manual(values = color_mapping) +
   theme_classic()
-plot43
+plot49
 
 df_Nubian = df %>% filter(Patination!=99 & Patination!=1 & Patination!=2 & Condensed_Cores == "Lev_Nubian")
 kruskal.test(Length ~ as.factor(Patination), data = df_Nubian)
 pairwise.wilcox.test(df_Nubian$Length, as.factor(df_Nubian$Patination), p.adjust.method = "BH")
 
-plot44 = ggplot(df %>% filter(Condensed_Cores == "Lev_Nubian" & Dissolution!=6),
+plot50 = ggplot(df %>% filter(Condensed_Cores == "Lev_Nubian" & Dissolution!=6),
                 aes(x = as.factor(Dissolution), y = Length,
                     fill = as.factor(Dissolution))) +
   geom_boxplot(outlier.shape = NA) +
@@ -941,13 +1111,13 @@ plot44 = ggplot(df %>% filter(Condensed_Cores == "Lev_Nubian" & Dissolution!=6),
        fill="Dissolution") +
   scale_fill_manual(values = color_mapping) +
   theme_classic()
-plot44
+plot50
 
 df_Nubian = df %>% filter(Condensed_Cores == "Lev_Nubian" & Dissolution!=6)
 kruskal.test(Length ~ as.factor(Dissolution), data = df_Nubian)
 pairwise.wilcox.test(df_Nubian$Length, as.factor(df_Nubian$Dissolution), p.adjust.method = "BH")
 
-plot45 = ggplot(df %>% filter(Condensed_Cores == "Lev_Nubian" & Edge_Damage!=5),
+plot51 = ggplot(df %>% filter(Condensed_Cores == "Lev_Nubian" & Edge_Damage!=5),
                 aes(x = as.factor(Edge_Damage), y = Length,
                     fill = as.factor(Edge_Damage))) +
   geom_boxplot(outlier.shape = NA) +
@@ -957,12 +1127,12 @@ plot45 = ggplot(df %>% filter(Condensed_Cores == "Lev_Nubian" & Edge_Damage!=5),
        fill="Edge Damage") +
   scale_fill_manual(values = color_mapping) +
   theme_classic()
-plot45
+plot51
 
 df_Nubian = df %>% filter(Condensed_Cores == "Lev_Nubian")
 kruskal.test(Length ~ as.factor(Edge_Damage), data = df_Nubian)
 
-plot46 = ggplot(df %>% filter(Condensed_Cores == "Lev_Nubian"),
+plot52 = ggplot(df %>% filter(Condensed_Cores == "Lev_Nubian"),
                 aes(x = as.factor(Abrasion), y = Length,
                     fill = as.factor(Abrasion))) +
   geom_boxplot(outlier.shape = NA) +
@@ -972,14 +1142,14 @@ plot46 = ggplot(df %>% filter(Condensed_Cores == "Lev_Nubian"),
        fill="Abrasion") +
   scale_fill_manual(values = color_mapping) +
   theme_classic()
-plot46
+plot52
 
 df_Nubian = df %>% filter(Condensed_Cores == "Lev_Nubian")
 kruskal.test(Length ~ as.factor(Abrasion), data = df_Nubian)
 pairwise.wilcox.test(df_Nubian$Length, as.factor(df_Nubian$Abrasion), p.adjust.method = "BH")
 
 # Blades & Blade Cores Metric Boxplots
-plot47 = ggplot(df %>% filter(Patination!=99 & Art_Category == "blades_cores" & Condition == "c"),
+plot53 = ggplot(df %>% filter(Patination!=99 & Art_Category == "blades_cores" & Condition == "c"),
                 aes(x = as.factor(Patination), y = Length,
                     fill = as.factor(Patination))) +
   geom_boxplot(outlier.shape = NA) +
@@ -988,13 +1158,13 @@ plot47 = ggplot(df %>% filter(Patination!=99 & Art_Category == "blades_cores" & 
        fill="Patina Stage") +
   scale_fill_manual(values = color_mapping) +
   theme_classic()
-plot47
+plot53
 
 df_bladesandcores = df %>% filter(Patination!=99 & Art_Category == "blades_cores" & Condition == "c")
 kruskal.test(Length ~ as.factor(Patination), data = df_bladesandcores)
 pairwise.wilcox.test(df_bladesandcores$Length, as.factor(df_bladesandcores$Patination), p.adjust.method = "BH")
 
-plot48 = ggplot(df %>% filter(Art_Category == "blades_cores" & Condition == "c"),
+plot54 = ggplot(df %>% filter(Art_Category == "blades_cores" & Condition == "c"),
                 aes(x = as.factor(Dissolution), y = Length,
                     fill = as.factor(Dissolution))) +
   geom_boxplot(outlier.shape = NA) +
@@ -1003,13 +1173,13 @@ plot48 = ggplot(df %>% filter(Art_Category == "blades_cores" & Condition == "c")
        fill="Dissolution") +
   scale_fill_manual(values = color_mapping) +
   theme_classic()
-plot48
+plot54
 
 df_bladesandcores = df %>% filter(Art_Category == "blades_cores" & Condition == "c")
 kruskal.test(Length ~ as.factor(Dissolution), data = df_bladesandcores)
 pairwise.wilcox.test(df_bladesandcores$Length, as.factor(df_bladesandcores$Dissolution), p.adjust.method = "BH")
 
-plot49 = ggplot(df %>% filter(Art_Category == "blades_cores" & Condition == "c"),
+plot55 = ggplot(df %>% filter(Art_Category == "blades_cores" & Condition == "c"),
                 aes(x = as.factor(Edge_Damage), y = Length,
                     fill = as.factor(Edge_Damage))) +
   geom_boxplot(outlier.shape = NA) +
@@ -1018,13 +1188,13 @@ plot49 = ggplot(df %>% filter(Art_Category == "blades_cores" & Condition == "c")
        fill="Edge Damage") +
   scale_fill_manual(values = color_mapping) +
   theme_classic()
-plot49
+plot55
 
 df_bladesandcores = df %>% filter(Art_Category == "blades_cores" & Condition == "c")
 kruskal.test(Length ~ as.factor(Edge_Damage), data = df_bladesandcores)
 pairwise.wilcox.test(df_bladesandcores$Length, as.factor(df_bladesandcores$Edge_Damage), p.adjust.method = "BH")
 
-plot50 = ggplot(df %>% filter(Art_Category == "blades_cores" & Condition == "c"),
+plot56 = ggplot(df %>% filter(Art_Category == "blades_cores" & Condition == "c"),
                 aes(x = as.factor(Abrasion), y = Length,
                     fill = as.factor(Abrasion))) +
   geom_boxplot(outlier.shape = NA) +
@@ -1033,14 +1203,14 @@ plot50 = ggplot(df %>% filter(Art_Category == "blades_cores" & Condition == "c")
        fill="Abrasion") +
   scale_fill_manual(values = color_mapping) +
   theme_classic()
-plot50
+plot56
 
 df_bladesandcores = df %>% filter(Art_Category == "blades_cores" & Condition == "c")
 kruskal.test(Length ~ as.factor(Abrasion), data = df_bladesandcores)
 pairwise.wilcox.test(df_bladesandcores$Length, as.factor(df_bladesandcores$Abrasion), p.adjust.method = "BH")
 
 # 419 Nubian Core lengths
-plot51 = ggplot(df %>% filter(Patination!=99 & Patination!=1 & Condensed_Cores == "Lev_Nubian" & Site == "419"),
+plot57 = ggplot(df %>% filter(Patination!=99 & Patination!=1 & Condensed_Cores == "Lev_Nubian" & Site == "419"),
                 aes(x = as.factor(Patination), y = Length,
                     fill = as.factor(Patination))) +
   geom_boxplot(outlier.shape = NA) +
@@ -1049,13 +1219,13 @@ plot51 = ggplot(df %>% filter(Patination!=99 & Patination!=1 & Condensed_Cores =
        fill="Patina Stage") +
   scale_fill_manual(values = color_mapping) +
   theme_classic()
-plot51
+plot57
 
 df_419Nubian = df %>% filter(Patination!=99 & Patination!=1 & Site== "419" & Condensed_Cores == "Lev_Nubian")
 kruskal.test(Length ~ as.factor(Patination), data = df_419Nubian)
 pairwise.wilcox.test(df_419Nubian$Length, as.factor(df_419Nubian$Patination), p.adjust.method = "BH")
 
-plot52 = ggplot(df %>% filter(Patination!=99 & Condensed_Cores == "Lev_Nubian" & Site == "419"),
+plot58 = ggplot(df %>% filter(Patination!=99 & Condensed_Cores == "Lev_Nubian" & Site == "419"),
                 aes(x = as.factor(Patina_Condensed), y = Length,
                     fill = as.factor(Patina_Condensed))) +
   geom_boxplot(outlier.shape = NA) +
@@ -1064,15 +1234,469 @@ plot52 = ggplot(df %>% filter(Patination!=99 & Condensed_Cores == "Lev_Nubian" &
        fill="Patina Stage") +
   scale_fill_manual(values = color_mapping) +
   theme_classic()
-plot52
+plot58
 
 df_419Nubian = df %>% filter(Patination!=99 & Site== "419" & Condensed_Cores == "Lev_Nubian")
 kruskal.test(Length ~ as.factor(Patina_Condensed), data = df_419Nubian)
 pairwise.wilcox.test(df_419Nubian$Length, as.factor(df_419Nubian$Patina_Condensed), p.adjust.method = "BH")
 
-# 3D Plot [unused]
-plot = plot_ly(df_76, x = ~X_Coord, y = ~Y_Coord, z = ~Z_Coord,
-               type = "scatter3d", mode = "markers") %>%
-  layout(scene = list(
-    aspectmode = "data"))
+# 76 Scatterplots (old version)
+
+total_station_x <- 295
+total_station_y <- 185
+total_station_z <- 530.5
+outcrop2_x <- 243
+outcrop2_y <- 162
+
+plot1 = ggplot(df %>% filter(Site==76),
+               aes(x=X_Coord, y=Y_Coord, color=as.factor(Patination))) +
+  geom_point()+
+  labs(x = "x-coord (m)",
+       y = "y-coord (m)",
+       color="Patina Stage") +
+  scale_color_viridis(discrete = TRUE, option = "D", direction=-1)+
+  theme_classic() +
+  geom_point(aes(x = total_station_x, y = total_station_y), color = "black", shape = 8, size = 4) +
+  geom_point(aes(x = outcrop2_x, y = outcrop2_y), color = "red", shape = 8, size = 4)
+plot1
+
+plot2 = ggplot(df %>% filter(Site==76),
+               aes(x=X_Coord, y=Y_Coord, color=as.factor(Dissolution))) +
+  geom_point()+
+  labs(color="Dissolution") +
+  scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
+  theme_classic()+
+  theme(axis.title=element_blank()) +
+  geom_point(aes(x = total_station_x, y = total_station_y), color = "black", shape = 8, size = 4) +
+  geom_point(aes(x = outcrop2_x, y = outcrop2_y), color = "red", shape = 8, size = 4)
+plot2
+
+plot3 = ggplot(df %>% filter(Site==76),
+               aes(x=X_Coord, y=Y_Coord, color=as.factor(`Edge_Damage`))) +
+  geom_point() +
+  labs(x = "x-coord (m)",
+       y = "y-coord (m)",
+       color="Edge Damage") +
+  scale_color_viridis(discrete = TRUE, option = "D", direction=-1)+
+  theme_classic() +
+  theme(axis.title=element_blank()) +
+  geom_point(aes(x = total_station_x, y = total_station_y), color = "black", shape = 8, size = 4) +
+  geom_point(aes(x = outcrop2_x, y = outcrop2_y), color = "red", shape = 8, size = 4)
+plot3
+
+plot4 = ggplot(df %>% filter(Site==76),
+               aes(x=X_Coord, y=Y_Coord, color=as.factor(`Abrasion`))) +
+  geom_point()+
+  labs(x = "x-coord (m)",
+       y = "y-coord (m)",
+       color="Abrasion") +
+  scale_color_viridis(discrete = TRUE, option = "D", direction=-1)+
+  theme_classic() +
+  theme(axis.title=element_blank()) +
+  geom_point(aes(x = total_station_x, y = total_station_y), color = "black", shape = 8, size = 4) +
+  geom_point(aes(x = outcrop2_x, y = outcrop2_y), color = "red", shape = 8, size = 4)
+plot4
+
+plot5 = ggplot(df %>% filter(Site==76),
+               aes(x=Y_Coord, y=Z_Coord, color=as.factor(Patination))) +
+  geom_point()+
+  labs(x = "y-coord (m)",
+       y = "z-coord (m)") +
+  scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
+  theme_classic()+
+  theme(legend.position="none") +
+  geom_point(aes(x = total_station_y, y = total_station_z), color = "black", shape = 8, size = 4) +
+  expand_limits(y = 530.75) +
+  coord_fixed(ratio = 1)
+plot5
+
+plot = ggarrange(
+  ggarrange(plot1, plot2, ncol = 2, nrow = 1),
+  ggarrange(plot3, plot4, ncol = 2, nrow = 1),
+  plot5,
+  ncol = 1, nrow = 3,
+  heights = c(1, 1, .5))
+plot = annotate_figure(plot,
+                       top = text_grob("TH76", size = 13))
+plot
+
+# 123 Scatterplots (old version)
+
+total_station_x <- 292.5
+total_station_y <- 170
+total_station_z <- 529.5
+
+plot6 = ggplot(df %>% filter(Site==123),
+               aes(x=X_Coord, y=Y_Coord, color=as.factor(Patination))) +
+  geom_point()+
+  labs(x = "x-coord (m)",
+       y = "y-coord (m)",
+       color = "Patina Stage") +
+  scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
+  theme_classic() +
+  geom_point(aes(x = total_station_x, y = total_station_y), color = "black", shape = 8, size = 4) +
+  plot6
+
+plot7 = ggplot(df %>% filter(Site==123),
+               aes(x=X_Coord, y=Y_Coord, color=as.factor(`Dissolution`))) +
+  geom_point()+
+  labs(x = "x-coord (m)",
+       y = "y-coord (m)",
+       color= "Dissolution") +
+  scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
+  theme_classic()+
+  theme(axis.title=element_blank()) +
+  geom_point(aes(x = total_station_x, y = total_station_y), color = "black", shape = 8, size = 4)
+plot7
+
+plot8 = ggplot(df %>% filter(Site==123),
+               aes(x=X_Coord, y=Y_Coord, color=as.factor(`Edge_Damage`))) +
+  geom_point()+
+  labs(x = "x-coord (m)",
+       y = "y-coord (m)",
+       color="Edge Damage") +
+  scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
+  theme_classic()+
+  theme(axis.title=element_blank()) +
+  geom_point(aes(x = total_station_x, y = total_station_y), color = "black", shape = 8, size = 4)
+plot8
+
+plot9 = ggplot(df %>% filter(Site==123),
+               aes(x=X_Coord, y=Y_Coord, color=as.factor(`Abrasion`))) +
+  geom_point()+
+  labs(x = "x-coord (m)",
+       y = "y-coord (m)",
+       color="Abrasion") +
+  scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
+  theme_classic()+
+  theme(axis.title=element_blank()) +
+  geom_point(aes(x = total_station_x, y = total_station_y), color = "black", shape = 8, size = 4)
+plot9
+
+plot10 = ggplot(df %>% filter(Site==123),
+                aes(x=Y_Coord, y=Z_Coord, color=as.factor(Patination))) +
+  geom_point()+
+  labs(x = "y-coord (m)",
+       y = "z-coord (m)") +
+  scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
+  theme_classic()+
+  theme(legend.position="none") +
+  geom_point(aes(x = total_station_y, y = total_station_z), color = "black", shape = 8, size = 4) +
+  expand_limits(y = 529.6) +
+  coord_fixed(ratio = 1)
+plot10
+
+plot = ggarrange(
+  ggarrange(plot6, plot7, ncol = 2, nrow = 1),
+  ggarrange(plot8, plot9, ncol = 2, nrow = 1),
+  plot10,
+  ncol = 1, nrow = 3,
+  heights = c(1, 1, .5))
+plot = annotate_figure(plot,
+                       top = text_grob("TH123", size = 13))
+plot
+
+# 143 Scatterplots (old version)
+
+total_station_x <- 290
+total_station_y <- 163.5
+total_station_z <- 529
+
+plot11 = ggplot(df %>% filter(Site==143),
+                aes(x=X_Coord, y=Y_Coord, color=as.factor(Patination))) +
+  geom_point()+
+  labs(x = "x-coord (m)",
+       y = "y-coord (m)",
+       color = "Patina Stage") +
+  scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
+  theme_classic() +
+  geom_point(aes(x = total_station_x, y = total_station_y), color = "black", shape = 8, size = 4)
+plot11
+
+plot12 = ggplot(df %>% filter(Site==143),
+                aes(x=X_Coord, y=Y_Coord, color=as.factor(`Dissolution`))) +
+  geom_point()+
+  labs(x = "x-coord (m)",
+       y = "y-coord (m)",
+       color= "Dissolution") +
+  scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
+  theme_classic() +
+  theme(axis.title=element_blank()) +
+  geom_point(aes(x = total_station_x, y = total_station_y), color = "black", shape = 8, size = 4)
+plot12
+
+plot13 = ggplot(df %>% filter(Site==143),
+                aes(x=X_Coord, y=Y_Coord, color=as.factor(`Edge_Damage`))) +
+  geom_point()+
+  labs(x = "x-coord (m)",
+       y = "y-coord (m)",
+       color="Edge Damage") +
+  scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
+  theme_classic()+
+  theme(axis.title=element_blank()) +
+  geom_point(aes(x = total_station_x, y = total_station_y), color = "black", shape = 8, size = 4)
+plot13
+
+plot14 = ggplot(df %>% filter(Site==143),
+                aes(x=X_Coord, y=Y_Coord, color=as.factor(`Abrasion`))) +
+  geom_point()+
+  labs(x = "x-coord (m)",
+       y = "y-coord (m)",
+       color="Abrasion") +
+  scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
+  theme_classic()+
+  theme(axis.title=element_blank()) +
+  geom_point(aes(x = total_station_x, y = total_station_y), color = "black", shape = 8, size = 4)
+plot14
+
+plot15 = ggplot(df %>% filter(Site==143),
+                aes(x=X_Coord, y=Z_Coord, color=as.factor(Patination))) +
+  geom_point()+
+  labs(x = "x-coord (m)",
+       y = "z-coord (m)") +
+  scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
+  theme_classic()+
+  theme(legend.position="none") +
+  geom_point(aes(x = total_station_x, y = total_station_z), color = "black", shape = 8, size = 4) +
+  expand_limits(y = 529.25) +
+  coord_fixed(ratio = 1)
+plot15
+
+plot = ggarrange(
+  ggarrange(plot11, plot12, ncol = 2, nrow = 1),
+  ggarrange(plot13, plot14, ncol = 2, nrow = 1),
+  plot15,
+  ncol = 1, nrow = 3,
+  heights = c(1, 1, .5))
+plot = annotate_figure(plot,
+                       top = text_grob("TH143", size = 13))
+plot
+
+# 187 Scatterplots (old version)
+
+total_station_x <- 293
+total_station_y <- 165
+total_station_z <- 529.5
+
+plot16 = ggplot(df %>% filter(Site==187),
+                aes(x=X_Coord, y=Y_Coord, color=as.factor(Patination))) +
+  geom_point()+
+  labs(x = "x-coord (m)",
+       y = "y-coord (m)",
+       color = "Patina Stage") +
+  scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
+  theme_classic() +
+  geom_point(aes(x = total_station_x, y = total_station_y), color = "black", shape = 8, size = 4)
+plot16
+
+plot17 = ggplot(df %>% filter(Site==187),
+                aes(x=X_Coord, y=Y_Coord, color=as.factor(`Dissolution`))) +
+  geom_point()+
+  labs(x = "x-coord (m)",
+       y = "y-coord (m)",
+       color= "Dissolution") +
+  scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
+  theme_classic()+
+  theme(axis.title=element_blank()) +
+  geom_point(aes(x = total_station_x, y = total_station_y), color = "black", shape = 8, size = 4)
+plot17
+
+plot18 = ggplot(df %>% filter(Site==187),
+                aes(x=X_Coord, y=Y_Coord, color=as.factor(`Edge_Damage`))) +
+  geom_point()+
+  labs(x = "x-coord (m)",
+       y = "y-coord (m)",
+       color="Edge Damage") +
+  scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
+  theme_classic()+
+  theme(axis.title=element_blank()) +
+  geom_point(aes(x = total_station_x, y = total_station_y), color = "black", shape = 8, size = 4)
+plot18
+
+plot19 = ggplot(df %>% filter(Site==187),
+                aes(x=X_Coord, y=Y_Coord, color=as.factor(`Abrasion`))) +
+  geom_point()+
+  labs(x = "x-coord (m)",
+       y = "y-coord (m)",
+       color="Abrasion") +
+  scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
+  theme_classic()+
+  theme(axis.title=element_blank()) +
+  geom_point(aes(x = total_station_x, y = total_station_y), color = "black", shape = 8, size = 4)
+plot19
+
+plot20 = ggplot(df %>% filter(Site==187),
+                aes(x=Y_Coord, y=Z_Coord, color=as.factor(Patination))) +
+  geom_point()+
+  labs(x = "y-coord (m)",
+       y = "z-coord (m)") +
+  scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
+  theme_classic()+
+  theme(legend.position="none") +
+  geom_point(aes(x = total_station_y, y = total_station_z), color = "black", shape = 8, size = 4) +
+  expand_limits(y = 529.75) +
+  coord_fixed(ratio = 1)
+plot20
+
+plot = ggarrange(
+  ggarrange(plot16, plot17, ncol = 2, nrow = 1),
+  ggarrange(plot18, plot19, ncol = 2, nrow = 1),
+  plot20,
+  ncol = 1, nrow = 3,
+  heights = c(1, 1, .5))
+plot = annotate_figure(plot,
+                       top = text_grob("TH187", size = 13))
+plot
+
+# 188 Scatterplots (old version)
+
+total_station_x <- 287
+total_station_y <- 190
+total_station_z <- 532.5
+
+plot21 = ggplot(df %>% filter(Site==188),
+                aes(x=X_Coord, y=Y_Coord, color=as.factor(Patination))) +
+  geom_point()+
+  labs(x = "x-coord (m)",
+       y = "y-coord (m)",
+       color = "Patina Stage") +
+  scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
+  theme_classic() +
+  geom_point(aes(x = total_station_x, y = total_station_y), color = "black", shape = 8, size = 4)
+plot21
+
+plot22 = ggplot(df %>% filter(Site==188),
+                aes(x=X_Coord, y=Y_Coord, color=as.factor(`Dissolution`))) +
+  geom_point()+
+  labs(x = "x-coord (m)",
+       y = "y-coord (m)",
+       color= "Dissolution") +
+  scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
+  theme_classic()+
+  theme(axis.title=element_blank()) +
+  geom_point(aes(x = total_station_x, y = total_station_y), color = "black", shape = 8, size = 4)
+plot22
+
+plot23 = ggplot(df %>% filter(Site==188),
+                aes(x=X_Coord, y=Y_Coord, color=as.factor(`Edge_Damage`))) +
+  geom_point()+
+  labs(x = "x-coord (m)",
+       y = "y-coord (m)",
+       color="Edge Damage") +
+  scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
+  theme_classic()+
+  theme(axis.title=element_blank()) +
+  geom_point(aes(x = total_station_x, y = total_station_y), color = "black", shape = 8, size = 4)
+plot23
+
+plot24 = ggplot(df %>% filter(Site==188),
+                aes(x=X_Coord, y=Y_Coord, color=as.factor(`Abrasion`))) +
+  geom_point()+
+  labs(x = "x-coord (m)",
+       y = "y-coord (m)",
+       color="Abrasion") +
+  scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
+  theme_classic()+
+  theme(axis.title=element_blank()) +
+  geom_point(aes(x = total_station_x, y = total_station_y), color = "black", shape = 8, size = 4)
+plot24
+
+plot25 = ggplot(df %>% filter(Site==188),
+                aes(x=Y_Coord, y=Z_Coord, color=as.factor(Patination))) +
+  geom_point()+
+  labs(x = "y-coord (m)",
+       y = "z-coord (m)") +
+  scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
+  scale_x_reverse()+
+  theme_classic()+
+  theme(legend.position="none") +
+  geom_point(aes(x = total_station_y, y = total_station_z), color = "black", shape = 8, size = 4) +
+  expand_limits(y = 532.75) +
+  coord_fixed(ratio = 1)
+plot25
+
+plot = ggarrange(
+  ggarrange(plot21, plot22, ncol = 2, nrow = 1),
+  ggarrange(plot23, plot24, ncol = 2, nrow = 1),
+  plot25,
+  ncol = 1, nrow = 3,
+  heights = c(1, 1, .5))
+plot = annotate_figure(plot,
+                       top = text_grob("TH188", size = 13))
+plot
+
+# 419 Scatterplots (old version)
+
+total_station_x <- 287
+total_station_y <- 161
+total_station_z <- 529
+
+plot26 = ggplot(df %>% filter(Site==419 & Patination!=99),
+                aes(x=X_Coord, y=Y_Coord, color=as.factor(Patination))) +
+  geom_point()+
+  labs(x = "x-coord (m)",
+       y = "y-coord (m)",
+       color = "Patina Stage") +
+  scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
+  theme_classic() +
+  geom_point(aes(x = total_station_x, y = total_station_y), color = "black", shape = 8, size = 4)
+plot26
+
+plot27 = ggplot(df %>% filter(Site==419),
+                aes(x=X_Coord, y=Y_Coord, color=as.factor(`Dissolution`))) +
+  geom_point()+
+  labs(x = "x-coord (m)",
+       y = "y-coord (m)",
+       color= "Dissolution") +
+  scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
+  theme_classic()+
+  theme(axis.title=element_blank()) +
+  geom_point(aes(x = total_station_x, y = total_station_y), color = "black", shape = 8, size = 4)
+plot27
+
+plot28 = ggplot(df %>% filter(Site==419),
+                aes(x=X_Coord, y=Y_Coord, color=as.factor(`Edge_Damage`))) +
+  geom_point()+
+  labs(x = "x-coord (m)",
+       y = "y-coord (m)",
+       color="Edge Damage") +
+  scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
+  theme_classic()+
+  theme(axis.title=element_blank()) +
+  geom_point(aes(x = total_station_x, y = total_station_y), color = "black", shape = 8, size = 4)
+plot28
+
+plot29 = ggplot(df %>% filter(Site==419),
+                aes(x=X_Coord, y=Y_Coord, color=as.factor(`Abrasion`))) +
+  geom_point()+
+  labs(x = "x-coord (m)",
+       y = "y-coord (m)",
+       color="Abrasion") +
+  scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
+  theme_classic()+
+  theme(axis.title=element_blank()) +
+  geom_point(aes(x = total_station_x, y = total_station_y), color = "black", shape = 8, size = 4)
+plot29
+
+plot30 = ggplot(df %>% filter(Site==419),
+                aes(x=X_Coord, y=Z_Coord, color=as.factor(Patination))) +
+  geom_point()+
+  labs(x = "x-coord (m)",
+       y = "z-coord (m)") +
+  scale_color_viridis(discrete = TRUE, option = "D", direction=-1) +
+  theme_classic()+
+  theme(legend.position="none") +
+  geom_point(aes(x = total_station_x, y = total_station_z), color = "black", shape = 8, size = 4) +
+  expand_limits(y = 529.25) +
+  coord_fixed(ratio = 1)
+plot30
+
+plot = ggarrange(
+  ggarrange(plot26, plot27, ncol = 2, nrow = 1),
+  ggarrange(plot28, plot29, ncol = 2, nrow = 1),
+  plot30,
+  ncol = 1, nrow = 3,
+  heights = c(1, 1, .5))
+plot = annotate_figure(plot,
+                       top = text_grob("TH419", size = 13))
 plot
