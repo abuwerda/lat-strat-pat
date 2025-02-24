@@ -7,8 +7,8 @@
 
 This repository contains the data and code for our paper:
 
-> Jeffrey Ian Rose, Yamandú H. Hilbert, Vitaly I. Usyk, Michelle R. Bebber, Amir Beshkani, Briggs Buchanan, João Cascalheira, Dominik Chlachula, Rudolf Dellmour, Metin I. Eren, Roman Garba, Emily Hallinan, Li Li, Robert S. Walker, Anthony E. Marks  (2024). *Mapping lateral stratigraphy at Palaeolithic surface sites: a case study from Dhofar,
-Oman*. 
+> Jeffrey Ian Rose, Yamandú H. Hilbert, Vitaly I. Usyk, Michelle R. Bebber, Amir Beshkani, Briggs Buchanan, João Cascalheira, Dominik Chlachula, Rudolf Dellmour, Metin I. Eren, Roman Garba, Emily Hallinan, Li Li, Robert S. Walker, Anthony E. Marks  (2025). *Mapping lateral stratigraphy at Palaeolithic surface sites: a case study from Dhofar,
+Oman*, Journal of Archaeological Science, 173. 
 
 ### How to cite
 
